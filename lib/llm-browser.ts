@@ -22,7 +22,7 @@ export const PROVIDERS: { id: Provider; label: string; keyHint: string; keyUrl: 
 ];
 
 export const DEFAULT_MODELS: Record<Provider, string> = {
-  gemini: "gemini-2.5-flash",
+  gemini: "gemini-3.8-flash",
   claude: "claude-opus-5-5",
   openai: "gpt-5-mini",
 };
@@ -134,6 +134,7 @@ async function askOther(provider: Provider, key: string, model: string, system: 
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok && isKeyError(res.status, json?.error?.message)) throw new Error(BAD_KEY);
+  if (res.status === 404) throw new Error(`The AI model "${model}" isn't available. Ask your manager or IT to update the model under AI settings → Advanced.`);
   if (!res.ok) throw new Error(`Gemini ${res.status}: ${json?.error?.message ?? res.statusText}`);
   const text = json?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("");
   if (!text) throw new Error(`Gemini returned no answer (${json?.candidates?.[0]?.finishReason ?? "unknown reason"}).`);

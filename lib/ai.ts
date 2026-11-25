@@ -25,7 +25,7 @@ export type AiSummary = {
 };
 
 export const aiEnabled = () => Boolean(process.env.GEMINI_API_KEY);
-const MODEL = () => process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = () => process.env.GEMINI_MODEL || "gemini-3.8-flash";
 const MAX_REVIEWS = 150;
 export const CHAT_MAX_REVIEWS = 80;
 
