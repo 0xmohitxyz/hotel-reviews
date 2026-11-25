@@ -1,0 +1,32 @@
+name: Collect reviews
+
+on:
+  schedule:
+    - cron: "0 20 * * *" # daily ~07:00 Sydney
+  workflow_dispatch: {}
+
+concurrency: scrape
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Booking.com returns an empty review list to headless browsers, so run headed in a virtual display.
+      - run: xvfb-run --auto-servernum npm run scrape
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI_WRITE }}
+      - name: Keep debug artefacts when a property fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-debug
+          path: data/debug/
+          if-no-files-found: ignore

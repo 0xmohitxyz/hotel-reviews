@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+data/debug/
+notes/
+*.log
+.vercel/
+next-env.d.ts
+*.tsbuildinfo
+.playwright-mcp/
